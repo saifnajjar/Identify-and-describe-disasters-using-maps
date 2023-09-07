@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disasters List</title>
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        #map {
+            width: 55%;
+            height: 700px;
+        }
+        
+        .disaster-section {
+            flex: 1;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .disaster-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        a {
+            text-decoration: none;
+            color: #3498db;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: #e74c3c;
+        }
+    </style>
+    <script src="{% static 'leaflet/leaflet.js' %}"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="map"></div>
+        
+        <div class="disaster-section">
+            <h2 class="disaster-title">Hurricanes</h2>
+            <ul>
+                {% for hurricane in hurricanes %}
+                <li><a href="#" onclick="showMarker({{ hurricane.latitude }}, {{ hurricane.longitude }}, '{{ hurricane.description|escapejs }}')">{{ hurricane.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="disaster-section">
+            <h2 class="disaster-title">Earthquakes</h2>
+            <ul>
+                {% for earthquake in earthquakes %}
+                <li><a href="#" onclick="showMarker({{ earthquake.latitude }}, {{ earthquake.longitude }}, '{{ earthquake.description|escapejs }}')">{{ earthquake.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        var map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+        
+        var marker = L.marker();
+        
+        function showMarker(lat, lon, description) {
+            map.setView([lat, lon], 8);
+            
+            marker.setLatLng([lat, lon])
+                .addTo(map)
+                .bindPopup(description)
+                .openPopup();
+        }
+    </script>
+</body>
+</html>
